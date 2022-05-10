@@ -14,9 +14,17 @@ resource "aws_internet_gateway" "ao-gw" {
   }
 }
 
+############EIP###############
+resource "aws_eip" "nat" {
+  count = 1
+
+  vpc = true
+}
+
 ########## Subnets ####################
 resource "aws_subnet" "pub-subnet" {
   vpc_id     = aws_vpc.main-vpc.id
+  count = 2
   cidr_block = "${var.public_subnet}"
   availability_zone = "${var.availability_zone}"
   tags = {
@@ -25,6 +33,7 @@ resource "aws_subnet" "pub-subnet" {
 }
 resource "aws_subnet" "private-subnet" {
   vpc_id     = aws_vpc.main-vpc.id
+  coint = 2
   cidr_block = "${var.private_subnet}"
   availability_zone = "${var.availability_zone}"
   tags = {
@@ -33,7 +42,7 @@ resource "aws_subnet" "private-subnet" {
 }
 
 #########Route table#####################
-resource "aws_route_table" "ao-route-table" {
+resource "aws_route_table" "pub-route-table" {
   vpc_id = aws_vpc.main-vpc.id
 
   route {
@@ -42,7 +51,19 @@ resource "aws_route_table" "ao-route-table" {
   }
 
   tags = {
-    Name = "tf"
+    Name = "public route"
+  }
+}
+resource "aws_route_table" "private-route-table" {
+  vpc_id = aws_vpc.main-vpc.id
+
+  route {
+    cidr_block = "0.0.0.0/0"
+    gateway_id = aws_internet_gateway.ao-gw.id
+  }
+
+  tags = {
+    Name = "public route"
   }
 }
 ########### Route table association##################
