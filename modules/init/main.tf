@@ -17,3 +17,11 @@ resource "aws_s3_bucket" "terraform_state" {
     }
   }
 }
+resource "aws_dynamodb_table" "terraform_locks" {
+  name         = "terraform-up-and-running-locks"
+  hash_key     = "LockID"
+  attribute {
+    name = "LockID"
+    type = "S"
+  }
+}
