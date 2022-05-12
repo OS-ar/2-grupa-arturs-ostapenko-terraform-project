@@ -3,11 +3,13 @@ provider "aws" {
       access_key = "${var.aws_access_key}"
       secret_key = "${var.aws_access_key}"
 }
-# Internet Gateway for Public Subnet
-resource "aws_internet_gateway" "ig" {
-  vpc_id = aws_vpc.vpc.id
-  tags = {
-    Name        = "${var.environment}-igw"
-    Environment = var.environment
-  }
+# Modules
+
+module "vpc" {
+  source = "../../modules/vpc"
+  
+}
+module "ec2" {
+  source = "../../modules/ec2"
+  
 }
